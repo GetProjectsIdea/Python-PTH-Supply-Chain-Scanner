@@ -5,11 +5,14 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
+Built for the GetProjects tutorial:  
+👉 **[Python Supply Chain Security Scanner: Detect .pth Hooks with FastAPI &amp; SQLite (Free Code)](https://getprojects.org/python-pth-pypi-supply-chain-scanner/)**
+
 ---
 
 ## 📌 Overview
 
-Python provides a startup feature via `.pth` files in `site-packages`. While designed to add directory paths to `sys.path`, lines beginning with `import ` execute arbitrary Python statements every time the interpreter launches. Threat actors have actively abused this vector (such as the November 2026 compromise of Microsoft's `agent-framework` package) to drop persistence hooks and exfiltrate secrets.
+Python provides a startup feature via `.pth` files in `site-packages`. While designed to add directory paths to `sys.path`, lines beginning with `import ` execute arbitrary Python statements every time the interpreter launches. Threat actors have actively abused this vector to drop persistence hooks and exfiltrate credentials.
 
 This repository provides:
 1. **`.pth` Startup Hook Auditor (`scanner/pth_auditor.py`):** Scans virtual environments for executable lines (`PTH-001`) and uses Abstract Syntax Tree (AST) inspection to flag credential harvesting and exfiltration markers (`PTH-002`).
@@ -71,4 +74,4 @@ Open [http://127.0.0.1:5060](http://127.0.0.1:5060) in your browser.
 
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+MIT © 2026 Pardeep Patel / [GetProjects.org](https://getprojects.org/)
