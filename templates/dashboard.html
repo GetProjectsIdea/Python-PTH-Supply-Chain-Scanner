@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Python Supply-Chain Security Scanner</title>
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 24px; }
+    .wrap { max-width: 1080px; margin: 0 auto; }
+    h1 { margin: 0 0 8px; font-size: 1.6rem; color: #f8fafc; }
+    .sub { color: #94a3b8; margin-bottom: 24px; }
+    .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+    .card { background: #1e293b; border: 1px solid #334155; border-radius: 10px; padding: 16px; }
+    .kpi-label { font-size: 0.8rem; color: #94a3b8; text-transform: uppercase; }
+    .kpi-val { font-size: 1.8rem; font-weight: 700; margin-top: 6px; }
+    .critical { color: #f87171; } .warn { color: #fbbf24; } .pass { color: #34d399; }
+    input { width: 100%; box-sizing: border-box; background: #0f172a; color: #f8fafc; border: 1px solid #475569; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-family: monospace; }
+    button { background: #3b82f6; color: white; border: 0; border-radius: 8px; padding: 10px 18px; font-weight: 600; cursor: pointer; }
+    button:hover { background: #2563eb; }
+    pre { background: #020617; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; }
+    table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 0.9rem; }
+    th, td { text-align: left; padding: 10px; border-bottom: 1px solid #334155; }
+    th { color: #94a3b8; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Python .pth &amp; PyPI Supply-Chain Security Scanner</h1>
+    <p class="sub">Detect malicious site-packages startup hooks, compromised releases, and typosquats</p>
+
+    <div class="kpis">
+      <div class="card"><div class="kpi-label">Total Scans</div><div class="kpi-val">{{ stats.total_scans }}</div></div>
+      <div class="card"><div class="kpi-label">Critical</div><div class="kpi-val critical">{{ stats.critical_scans }}</div></div>
+      <div class="card"><div class="kpi-label">Warnings</div><div class="kpi-val warn">{{ stats.warn_scans }}</div></div>
+      <div class="card"><div class="kpi-label">Passed</div><div class="kpi-val pass">{{ stats.pass_scans }}</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom: 24px;">
+      <h2 style="margin-top:0;">Run Local Audit</h2>
+      <input id="sitePackages" placeholder="Optional site-packages path (e.g., .venv/lib/python3.11/site-packages)" />
+      <input id="reqPath" placeholder="Optional requirements.txt path (e.g., requirements.txt)" />
+      <button onclick="runAudit()">Scan Environment</button>
+      <pre id="scanOut">Waiting for scan...</pre>
+    </div>
+
+    <div class="card">
+      <h2 style="margin-top:0;">Recent Scan Reports</h2>
+      <table>
+        <thead><tr><th>ID</th><th>Status</th><th>Risk Score</th><th>Findings</th><th>Target</th></tr></thead>
+        <tbody>
+          {% for r in reports %}
+          <tr>
+            <td>#{{ r.id }}</td>
+            <td class="{{ r.status|lower }}">{{ r.status }}</td>
+            <td>{{ r.risk_score }}</td>
+            <td>{{ r.findings_count }}</td>
+            <td>{{ r.target_label }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    async function runAudit() {
+      const site_packages_dir = document.getElementById('sitePackages').value || null;
+      const requirements_path = document.getElementById('reqPath').value || null;
+      const res = await fetch('/api/scan', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({site_packages_dir, requirements_path})
+      });
+      document.getElementById('scanOut').textContent = JSON.stringify(await res.json(), null, 2);
+    }
+  </script>
+</body>
+</html>
